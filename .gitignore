@@ -1,0 +1,22 @@
+# Backend
+backend/bin/
+backend/obj/
+backend/support.db
+backend/support.db-*
+backend/*.db
+backend/.vs/
+backend/.idea/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env.local
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+*.user
+*.log
