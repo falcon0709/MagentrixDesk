@@ -1,0 +1,29 @@
+# Render Blueprint — Magentrix Desk
+# Deploy: push to GitHub → Render Dashboard → New → Blueprint
+
+services:
+  - type: web
+    name: magentrix-desk-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/tickets/stats
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__Default
+        value: Data Source=/app/data/support.db
+      - key: Cors__AllowedOrigins__0
+        value: https://magentrix-desk.onrender.com
+
+  - type: web
+    name: magentrix-desk
+    runtime: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE
+        value: https://magentrix-desk-api.onrender.com/api

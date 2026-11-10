@@ -1,0 +1,10 @@
+bin/
+obj/
+*.db
+*.db-*
+.vs/
+.idea/
+*.user
+*.log
+Properties/launchSettings.json
+SupportDashboard.Api.http

@@ -52,6 +52,41 @@ App: **http://localhost:5173**
 
 The SPA calls `http://localhost:5080/api` (see `frontend/.env.development`).
 
+### 3. Run the API with Docker (optional)
+
+```bash
+cd backend
+docker build -t magentrix-api .
+docker run --rm -p 8080:8080 \
+  -e Cors__AllowedOrigins__0=http://localhost:5173 \
+  magentrix-api
+```
+
+API: **http://localhost:8080** · Swagger: **http://localhost:8080/swagger**
+
+Point the SPA at it with `VITE_API_BASE=http://localhost:8080/api` (or keep the Vite proxy in local `npm run dev`).
+
+## Deploy to Render
+
+The repo includes a [`render.yaml`](render.yaml) Blueprint:
+
+| Service | Type | URL |
+| --- | --- | --- |
+| `magentrix-desk-api` | Web (Docker) | `https://magentrix-desk-api.onrender.com` |
+| `magentrix-desk` | Static Site | `https://magentrix-desk.onrender.com` |
+
+1. Commit and push this project to GitHub (or GitLab).
+2. In [Render](https://dashboard.render.com): **New → Blueprint** → connect the repo.
+3. Apply the Blueprint and wait for both services to build.
+4. Open `https://magentrix-desk.onrender.com`.
+
+**Notes**
+
+- Free-tier services spin down when idle (first request may take ~30–60s).
+- SQLite lives inside the container (`/app/data/support.db`) and is **ephemeral** — data resets on redeploy/restart; the seeder repopulates sample tickets.
+- Production SPA builds with `VITE_API_BASE=https://magentrix-desk-api.onrender.com/api` ([`frontend/.env.production`](frontend/.env.production)).
+- CORS allows the Render SPA origin (override via `Cors__AllowedOrigins__0` if you rename services).
+
 ## Core features
 
 - Ticket CRUD with status, priority, customer, assignee, created/updated timestamps
@@ -75,7 +110,8 @@ The SPA calls `http://localhost:5080/api` (see `frontend/.env.development`).
 - **Filtering/sorting on the server**: keeps list behavior consistent and ready for larger datasets.
 - **SQLite + EnsureCreated**: zero-config local persistence; fine for a demo, not a migration story for production.
 - **Enums as integers** over the wire (`0–3` status, `0–2` priority) with labels on the client — simple and explicit.
-- **CORS** limited to the Vite dev origin.
+- **CORS** allows the Vite dev origin and the Render SPA URL; extra origins via `Cors:AllowedOrigins` / `Cors__AllowedOrigins__*`.
+- **Hosting**: API is Dockerized for Render; SPA is a Render Static Site. SQLite is demo-grade (no persistent disk).
 - **Desktop-first** responsive layout as allowed by the brief.
 
 ## API overview
@@ -102,7 +138,7 @@ The SPA calls `http://localhost:5080/api` (see `frontend/.env.development`).
 - Pagination + full-text search indexes
 - Automated tests (API integration + Vue component tests)
 - Soft delete, attachments, email notifications / SLA timers
-- EF migrations and a production-ready hosting story (Docker Compose)
+- EF migrations, persistent volume (or Postgres), and auth for a real production deploy
 
 ## License / confidentiality
 
