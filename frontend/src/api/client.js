@@ -1,4 +1,19 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5080/api'
+const PRODUCTION_API = 'https://magentrixdesk.onrender.com/api'
+const LEGACY_DEAD_API = 'magentrix-desk-api.onrender.com'
+
+function resolveApiBase() {
+  const configured = (import.meta.env.VITE_API_BASE || '').replace(/\/$/, '')
+  if (!configured) {
+    return import.meta.env.PROD ? PRODUCTION_API : 'http://localhost:5080/api'
+  }
+  // Stale Vercel env still pointed at the retired Render hostname.
+  if (configured.includes(LEGACY_DEAD_API)) {
+    return PRODUCTION_API
+  }
+  return configured
+}
+
+const API_BASE = resolveApiBase()
 
 async function request(path, options = {}) {
   const response = await fetch(`${API_BASE}${path}`, {
