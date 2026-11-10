@@ -72,20 +72,20 @@ The repo includes a [`render.yaml`](render.yaml) Blueprint:
 
 | Service | Type | URL |
 | --- | --- | --- |
-| `magentrix-desk-api` | Web (Docker) | `https://magentrix-desk-api.onrender.com` |
-| `magentrix-desk` | Static Site | `https://magentrix-desk.onrender.com` |
+| API (Web/Docker) | Web | `https://magentrixdesk.onrender.com` |
+| SPA | Static / Vercel | Render or `*.vercel.app` |
 
 1. Commit and push this project to GitHub (or GitLab).
 2. In [Render](https://dashboard.render.com): **New → Blueprint** → connect the repo.
 3. Apply the Blueprint and wait for both services to build.
-4. Open `https://magentrix-desk.onrender.com`.
+4. Open the SPA URL (Render static site or your Vercel deployment).
 
 **Notes**
 
 - Free-tier services spin down when idle (first request may take ~30–60s).
 - SQLite lives inside the container (`/app/data/support.db`) and is **ephemeral** — data resets on redeploy/restart; the seeder repopulates sample tickets.
-- Production SPA builds with `VITE_API_BASE=https://magentrix-desk-api.onrender.com/api` ([`frontend/.env.production`](frontend/.env.production)).
-- CORS allows the Render SPA origin (override via `Cors__AllowedOrigins__0` if you rename services).
+- Production SPA builds with `VITE_API_BASE=https://magentrixdesk.onrender.com/api` ([`frontend/.env.production`](frontend/.env.production)).
+- CORS allows localhost, the Render SPA origin, and `magentrix-desk*.vercel.app` preview/production hosts (override via `Cors__AllowedOrigins__*`).
 
 ## Core features
 

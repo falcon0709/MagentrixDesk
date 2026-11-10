@@ -27,7 +27,8 @@ var defaultOrigins = new[]
 {
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://magentrix-desk.onrender.com"
+    "https://magentrix-desk.onrender.com",
+    "https://magentrixdesk.onrender.com"
 };
 
 var allowedOrigins = configuredOrigins
@@ -36,10 +37,27 @@ var allowedOrigins = configuredOrigins
     .Distinct(StringComparer.OrdinalIgnoreCase)
     .ToArray();
 
+static bool IsAllowedFrontendOrigin(string origin, string[] allowedOrigins)
+{
+    if (allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+        return true;
+
+    // Vercel production + preview URLs for this project (host changes per deploy).
+    if (Uri.TryCreate(origin, UriKind.Absolute, out var uri) &&
+        uri.Scheme == Uri.UriSchemeHttps &&
+        uri.Host.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase) &&
+        uri.Host.StartsWith("magentrix-desk", StringComparison.OrdinalIgnoreCase))
+    {
+        return true;
+    }
+
+    return false;
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
-        policy.WithOrigins(allowedOrigins)
+        policy.SetIsOriginAllowed(origin => IsAllowedFrontendOrigin(origin, allowedOrigins))
             .AllowAnyHeader()
             .AllowAnyMethod());
 });

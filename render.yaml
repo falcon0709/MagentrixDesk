@@ -16,6 +16,8 @@ services:
         value: Data Source=/app/data/support.db
       - key: Cors__AllowedOrigins__0
         value: https://magentrix-desk.onrender.com
+      - key: Cors__AllowedOrigins__1
+        value: https://magentrixdesk.onrender.com
 
   - type: web
     name: magentrix-desk
@@ -26,4 +28,4 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_BASE
-        value: https://magentrix-desk-api.onrender.com/api
+        value: https://magentrixdesk.onrender.com/api
